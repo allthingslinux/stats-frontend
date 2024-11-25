@@ -38,7 +38,7 @@ const sigmaStyle = { height: "100vh", width: "100vw" };
 
 // colormap function
 const cmap = colormap({
-  colormap: 'warm',
+  colormap: 'bluered',
   nshades: 101,
   format: 'hex',
   alpha: [0, 1],
