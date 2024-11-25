@@ -111,6 +111,13 @@ export const LoadGraph = () => {
           }
         });
 
+        // remove any nodes that have no edges
+        graph.forEachNode((node) => {
+          if (graph.degree(node) === 0) {
+            graph.dropNode(node);
+          }
+        });
+
         // find min and max weight in edges
         let minWeight = Infinity;
         let maxWeight = -Infinity;
