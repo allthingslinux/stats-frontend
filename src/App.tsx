@@ -70,7 +70,7 @@ function getMinMaxWeightedDegrees(graph: Graph) {
 function getNodeSize(graph: Graph, node: string) {
   const degree = weightedDegree(graph, node);
   const { minDegree, maxDegree } = getMinMaxWeightedDegrees(graph);
-  return scale(degree, minDegree, maxDegree, 5, 20);
+  return scale(degree, minDegree, maxDegree, 3, 15);
 }
 
 function getNodeColor(graph: Graph, node: string) {
