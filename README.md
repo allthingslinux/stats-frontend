@@ -2,6 +2,7 @@
 
 **High Priority**
 ---
+- [x] Refactoring
 - [ ] Search bar
 - [ ] Zoom buttons
 - [ ] Dark mode
