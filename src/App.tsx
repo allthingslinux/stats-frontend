@@ -107,7 +107,7 @@ export const LoadGraph = () => {
           if (graph.getNodeAttribute(node, 'label') === 'Anonymous User') {
             graph.setNodeAttribute(node, 'label', '');
             graph.setNodeAttribute(node, 'type', 'image');
-            graph.setNodeAttribute(node, 'image', './Question_Mark.svg');
+            graph.setNodeAttribute(node, 'image', './QuestionMark.svg');
           }
         });
 
