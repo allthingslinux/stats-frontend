@@ -21,8 +21,8 @@ export const Complete: FC<{ _style?: CSSProperties }> = ({ _style }) => {
       <ControlsContainer position={"bottom-right"} className="md:w-2/6 w-full">
         <div className="flex flex-row-reverse align-middle">
           <SearchControl className="w-2/6 px-2" />
-          <ZoomControl />
-          <FullScreenControl /> 
+          <ZoomControl className="[&&>*]:flex [&>*]:justify-center [&>*]:items-center" />
+          <FullScreenControl className="[&&>*]:flex [&>*]:justify-center [&>*]:items-center" /> 
         </div>
         {/* <LayoutsControl /> */}
         <DescriptionPanel />
