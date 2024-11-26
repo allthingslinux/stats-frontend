@@ -5,7 +5,8 @@
 - [x] FIX MOBILE
 - [x] Search bar
 - [x] Zoom buttons
-- [ ]
+- [ ] Move search bar to left
+- [ ] Put the dropdown button on the right corner and make it bigger
 - [ ] Dark mode
 - [x] Color by weight and thickness by weight
 - [x] About dropdown under search bar
