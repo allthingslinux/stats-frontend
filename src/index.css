@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:global(.react-sigma-control) button {
+    padding-left: 7px;
+}
