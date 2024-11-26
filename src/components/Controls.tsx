@@ -12,8 +12,7 @@ import "../index.css";
 
 // import { LayoutsControl } from "../../common/LayoutsControl";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const Complete: FC<{ style?: CSSProperties }> = ({ style }) => {
+export const Complete: FC<{ _style?: CSSProperties }> = ({ _style }) => {
   return (
     // this crap <>
     // you have to wrap it in an empty element???? 
