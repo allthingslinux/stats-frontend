@@ -21,7 +21,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    "noUnus": [true, {"ignore-pattern": "^_"}],
   },
   "include": ["src"]
 }
