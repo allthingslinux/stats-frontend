@@ -1,5 +1,7 @@
 # frontend for stats.atl.dev
 
+some things are hard coded please fork if you want to self host
+
 ## **High Priority**
 
 - [x] FIX MOBILE
