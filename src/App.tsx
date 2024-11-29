@@ -113,13 +113,14 @@ export const LoadGraph = () => {
         loadGraph(graph); // load the graph to the sigma container
         assign(); // assign the circular layout
 
+        // infer settings for forceAtlas2
+        const sensibleSettings = forceAtlas2.inferSettings(graph);
         forceAtlas2.assign(graph, {
           // assign the forceAtlas2 layout
           iterations: 1000,
           settings: {
-            gravity: 0.5,
             scalingRatio: 500,
-            edgeWeightInfluence: 1.5,
+            ...sensibleSettings,
           },
         });
       });
