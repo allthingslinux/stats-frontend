@@ -68,7 +68,7 @@ const DescriptionPanel: FC = () => {
         Data collection started on 2024-11-24.<br />
         Data is only collected from the #general channel.<br />
         <br />
-        <b>Seems like its stuck loading? This graph can take a while to load, please give it 15 seconds before asking for help!</b><br />
+        To toggle anonymous please run the command "s$toggleanonymous" in the #bot-commands channel.<br />
       </div>
     </Panel>
   );
