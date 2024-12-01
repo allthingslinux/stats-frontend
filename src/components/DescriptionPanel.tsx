@@ -61,6 +61,7 @@ const DescriptionPanel: FC = () => {
         <br />
         Nodes with question marks are anonymous users. Users are anonymous by default, but can choose to reveal their
         identity by running a command.<br />
+        Nodes with different icons just got it for some random reason. Generally for some accomplishment.<br />
         <br />
         Created by the All Things Linux team and the <a href="https://accuratelinuxgraphs.com" className="underline">accuratelinuxgraphs</a> team.<br />
         Backend available at <a href="https://stats-backend.atl.dev" className="underline">https://stats-backend.atl.dev</a>.<br />

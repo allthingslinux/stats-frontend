@@ -49,6 +49,32 @@ export const LoadGraph = () => {
           }
         });
 
+        // load custom.json from the server (/custom.json)
+        // this file contains custom attributes for the nodes
+        /*
+        {
+            "nodes": [
+                {
+                    "id": "node id",
+                    "image": "./Image.svg"
+                }
+            ]
+        }
+        */
+        fetch("/custom.json")
+          .then((res) => res.json())
+          .then((data) => {
+            // set the image for each node
+            data.nodes.forEach((node: { id: string; image: string }) => {
+              // check if the node exists
+              if (!graph.hasNode(node.id)) {
+                return;
+              }
+              graph.setNodeAttribute(node.id, "type", "image");
+              graph.setNodeAttribute(node.id, "image", node.image);
+            });
+          });
+
         // set all node tags to their weighted degree
         graph.forEachNode((node) => {
           const weighted = weightedDegree(graph, node);
