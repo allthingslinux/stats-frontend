@@ -12,6 +12,8 @@ import forceAtlas2 from "graphology-layout-forceatlas2";
 import { createNodeImageProgram } from "@sigma/node-image";
 import { getColor, getNodeSize, getNodeColor } from "./Utils";
 import { Complete } from "./components/Controls";
+import { drawLabel, drawHover } from "./GraphRenderers";
+import { weightedDegree } from "graphology-metrics/node";
 
 // 100v(h/w) is 100% of the viewport height/widths
 const sigmaStyle = { height: "100vh", width: "100vw" };
@@ -45,6 +47,12 @@ export const LoadGraph = () => {
             graph.setNodeAttribute(node, "type", "image");
             graph.setNodeAttribute(node, "image", "./QuestionMark.svg");
           }
+        });
+
+        // set all node tags to their weighted degree
+        graph.forEachNode((node) => {
+          const weighted = weightedDegree(graph, node);
+          graph.setNodeAttribute(node, "tag", weighted);
         });
 
         // remove any nodes that have no edges
@@ -117,7 +125,7 @@ export const LoadGraph = () => {
         const sensibleSettings = forceAtlas2.inferSettings(graph);
         forceAtlas2.assign(graph, {
           // assign the forceAtlas2 layout
-          iterations: 1000,
+          iterations: 50,
           settings: {
             scalingRatio: 500,
             ...sensibleSettings,
@@ -134,7 +142,11 @@ export const DisplayGraph = () => {
   return (
     <SigmaContainer
       style={sigmaStyle} // set the style of the sigma container
-      settings={{ nodeProgramClasses: { image: createNodeImageProgram() } }} // for image nodes
+      settings={{ 
+        nodeProgramClasses: { image: createNodeImageProgram() },
+        defaultDrawNodeHover: drawHover,
+        defaultDrawNodeLabel: drawLabel,
+       }} // for image nodes
     >
       <LoadGraph />
       <Complete />

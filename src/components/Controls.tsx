@@ -1,4 +1,4 @@
-import { FC, CSSProperties } from "react";
+import { FC } from "react";
 
 import {
   ControlsContainer,
@@ -12,7 +12,7 @@ import "../index.css";
 
 // import { LayoutsControl } from "../../common/LayoutsControl";
 
-export const Complete: FC<{ _style?: CSSProperties }> = ({ _style }) => {
+export const Complete: FC = () => {
   return (
     // this crap <>
     // you have to wrap it in an empty element???? 
