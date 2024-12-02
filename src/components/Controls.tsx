@@ -18,7 +18,7 @@ export const Complete: FC = () => {
     // you have to wrap it in an empty element???? 
     // thank you react
     <>
-      <ControlsContainer position={"bottom-right"} className="md:w-2/6 w-full opacity-85">
+      <ControlsContainer position={"bottom-right"} className="lg:w-2/6 w-full opacity-85">
         <div className="flex flex-row align-middle">
           <SearchControl className="w-full px-2" />
           <ZoomControl className="[&&>*]:flex [&>*]:justify-center [&>*]:items-center" />
