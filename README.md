@@ -18,6 +18,8 @@ some things are hard coded please fork if you want to self host
 
 - [ ] Possibly be able to drag layout around
 - [ ] Change rendering options (E.G. label threshold)
+- [ ] Fix misaligned info box on small screens
+- [ ] Make info box fully white on light mode
 
 ## Build
 
