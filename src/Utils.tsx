@@ -4,14 +4,26 @@ import colormap from "colormap";
 import Graph from "graphology";
 import { weightedDegree } from "graphology-metrics/node/weighted-degree";
 
-// Define colormap
+// Define colormap (now based on if in dark or light mode)
 // Use 101 shades because 100 shades doesnt work
-const cmap = colormap({
-  colormap: "bluered",
-  nshades: 101,
-  format: "hex",
-  alpha: [0, 1],
-});
+let cmap: string[];
+if (document.cookie.includes("darkMode=true")) {
+  cmap = colormap({
+    colormap: "magma",
+    nshades: 106,
+    format: "hex",
+    alpha: [0, 1],
+  });
+  // Remove the first 5 colors because they are too dark
+  cmap = cmap.slice(5);
+} else {
+  cmap = colormap({
+    colormap: "bluered",
+    nshades: 101,
+    format: "hex",
+    alpha: [0, 1],
+  });
+}
 
 /// Get color based on value
 /// Used for coloring edges and nodes

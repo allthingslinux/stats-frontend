@@ -21,7 +21,7 @@ const Panel: FC<PropsWithChildren<{ title: ReactNode | string; initiallyDeployed
   }, [isDeployed]);
 
   return (
-    <div className="panel" ref={dom}>
+    <div className="panel dark:bg-black dark:text-white" ref={dom}>
       <h2 className="flex items-center justify-between">
         <span>{title}</span>
         <button
