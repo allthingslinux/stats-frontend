@@ -15,8 +15,15 @@ import { Complete } from "./components/Controls";
 import { drawLabel, drawHover } from "./GraphRenderers";
 import { weightedDegree } from "graphology-metrics/node";
 
+// The actual background color is still used for Sigma. Huh.
 // 100v(h/w) is 100% of the viewport height/widths
-const sigmaStyle = { height: "100vh", width: "100vw" };
+let sigmaStyle;
+if (document.cookie.includes("darkMode=true")) {
+  sigmaStyle = { backgroundColor: "#080808", height: "100vh", width: "100vw" };
+  document.documentElement.classList.add('dark');
+} else {
+  sigmaStyle = { height: "100vh", width: "100vw" };
+}
 
 // LoadGraph component that loads the graph from the GEXF file
 export const LoadGraph = () => {

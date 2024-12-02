@@ -8,6 +8,7 @@ import {
 } from "@react-sigma/core";
 import "@react-sigma/core/lib/react-sigma.min.css";
 import DescriptionPanel from "./DescriptionPanel";
+import DarkModeControl from "./DarkModeButton";
 import "../index.css";
 
 // import { LayoutsControl } from "../../common/LayoutsControl";
@@ -23,6 +24,7 @@ export const Complete: FC = () => {
           <SearchControl className="w-full px-2" />
           <ZoomControl className="[&&>*]:flex [&>*]:justify-center [&>*]:items-center" />
           <FullScreenControl className="[&&>*]:flex [&>*]:justify-center [&>*]:items-center" /> 
+          <DarkModeControl className="[&&>*]:flex [&>*]:justify-center [&>*]:items-center" /> 
         </div>
         {/* <LayoutsControl /> */}
         <DescriptionPanel />
