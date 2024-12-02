@@ -53,23 +53,20 @@ const DescriptionPanel: FC = () => {
         </div>
       }
     >
-      <div className="p-2">
-        This is a graph for the All Things Linux Discord server.<br />
-        <br />
-        This tracks how much different users ping/reply ping each other in the server. The more a user pings another
+      <div className="p-2 text-sm">
+        This tracks how much different users ping/reply ping each other in the All Things Linux server. The more a user pings another
         user, the closer they are in the graph and the thicker the line between them.<br />
         <br />
         Nodes with question marks are anonymous users. Users are anonymous by default, but can choose to reveal their
         identity by running a command.<br />
-        Nodes with different icons just got it for some random reason. Generally for some accomplishment.<br />
+        Nodes with different icons generally got it for a accomplishment.<br />
         <br />
-        Created by the All Things Linux team and the <a href="https://accuratelinuxgraphs.com" className="underline">accuratelinuxgraphs</a> team.<br />
+        Created by the All Things Linux and Accurate Linux Graphs.<br />
         Backend available at <a href="https://stats-backend.atl.dev" className="underline">https://stats-backend.atl.dev</a>.<br />
         <br />
-        Data collection started on 2024-11-24.<br />
-        Data is only collected from the #general channel.<br />
+        Data collection started on 2024-11-24 in the #general channel.<br />
         <br />
-        To toggle anonymous please run the command "s$toggleanonymous" in the #bot-commands channel.<br />
+        If you do not show up please the command "s$toggleanonymous".<br />
       </div>
     </Panel>
   );

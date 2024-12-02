@@ -1,7 +1,19 @@
 import { Settings } from "sigma/settings";
 import { NodeDisplayData, PartialButFor, PlainObject } from "sigma/types";
 
-const TEXT_COLOR = "#000000";
+let textColor = "#000000";
+
+function isColorLight(color: string) {
+  // convert hex color to rgb
+  console.log(color);
+  const r = parseInt(color.substr(1, 2), 16);
+  const g = parseInt(color.substr(3, 2), 16);
+  const b = parseInt(color.substr(5, 2), 16);
+  // calculate luminance
+  const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  // if luminance is greater than 128 return true
+  return lum > 128;
+}
 
 /**
  * This function draw in the input canvas 2D context a rectangle.
@@ -49,7 +61,15 @@ export function drawHover(context: CanvasRenderingContext2D, data: PlainObject, 
 
   // Then we draw the label background
   context.beginPath();
-  context.fillStyle = "#fff";
+  //context.fillStyle = "#fff";
+  // if data.color is light make the background dark and text white
+  if (isColorLight(data.color)) {
+    context.fillStyle = "#000";
+    textColor = "#fff";
+  } else {
+    context.fillStyle = "#fff";
+    textColor = "#000";
+  }
   context.shadowOffsetX = 0;
   context.shadowOffsetY = 2;
   context.shadowBlur = 8;
@@ -80,12 +100,12 @@ export function drawHover(context: CanvasRenderingContext2D, data: PlainObject, 
   context.shadowBlur = 0;
 
   // And finally we draw the labels
-  context.fillStyle = TEXT_COLOR;
+  context.fillStyle = textColor;
   context.font = `${weight} ${size}px ${font}`;
   context.fillText(label, data.x + data.size + 3, data.y + size / 3);
 
   if (subLabel) {
-    context.fillStyle = TEXT_COLOR;
+    context.fillStyle = textColor;
     context.font = `${weight} ${subLabelSize}px ${font}`;
     context.fillText(subLabel, data.x + data.size + 3, data.y - (2 * size) / 3 - 2);
   }
