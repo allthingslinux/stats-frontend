@@ -88,14 +88,6 @@ export const LoadGraph = () => {
           graph.setNodeAttribute(node, "tag", weighted);
         });
 
-        // remove any nodes that have no edges
-        // this way there are no nodes that are not connected to anything (this causes issues with forceAtlas2)
-        graph.forEachNode((node) => {
-          if (graph.degree(node) === 0) {
-            graph.dropNode(node);
-          }
-        });
-
         // find min and max weight in edges
         let minWeight = Infinity;
         let maxWeight = -Infinity;
