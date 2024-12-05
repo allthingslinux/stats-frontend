@@ -66,7 +66,7 @@ const DescriptionPanel: FC = () => {
         <br />
         Data collection started on 2024-11-24 in the #general channel.<br />
         <br />
-        If you do not show up please the command "s$toggleanonymous".<br />
+        If you do not show up please use the command "s$toggleanonymous".<br />
       </div>
     </Panel>
   );
