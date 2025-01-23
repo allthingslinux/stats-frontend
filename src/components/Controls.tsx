@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, memo } from "react";
 
 import {
   ControlsContainer,
@@ -13,7 +13,7 @@ import "../index.css";
 
 // import { LayoutsControl } from "../../common/LayoutsControl";
 
-export const Complete: FC = () => {
+export const Complete: FC = memo(() => {
   return (
     // this crap <>
     // you have to wrap it in an empty element???? 
@@ -31,4 +31,4 @@ export const Complete: FC = () => {
       </ControlsContainer>
     </>
   );
-};
+});

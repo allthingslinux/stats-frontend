@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, ReactNode, useEffect, useRef, useState } from "react";
+import { FC, PropsWithChildren, ReactNode, useEffect, useRef, useState, useMemo } from "react";
 import { BsInfoCircle } from "react-icons/bs";
 import { MdExpandLess, MdExpandMore } from "react-icons/md";
 import AnimateHeight from "react-animate-height";
@@ -20,6 +20,16 @@ const Panel: FC<PropsWithChildren<{ title: ReactNode | string; initiallyDeployed
       }, DURATION);
   }, [isDeployed]);
 
+  const memoizedAnimateHeight = useMemo(() => (
+    <AnimateHeight duration={DURATION} height={isDeployed ? "auto" : 0}>
+      {children}
+    </AnimateHeight>
+  ), [isDeployed, children]);
+
+  const memoizedMdExpandLess = useMemo(() => (
+    <MdExpandLess style={{ fontSize: "1.5rem" }} />
+  ), []);
+
   return (
     <div className="panel dark:bg-black dark:text-white" ref={dom}>
       <h2 className="flex items-center justify-between">
@@ -30,15 +40,13 @@ const Panel: FC<PropsWithChildren<{ title: ReactNode | string; initiallyDeployed
           className="p-2"
         >
           {isDeployed ? (
-            <MdExpandLess style={{ fontSize: "1.5rem" }} />
+            memoizedMdExpandLess
           ) : (
             <MdExpandMore style={{ fontSize: "1.5rem" }} />
           )}
         </button>
       </h2>
-      <AnimateHeight duration={DURATION} height={isDeployed ? "auto" : 0}>
-        {children}
-      </AnimateHeight>
+      {memoizedAnimateHeight}
     </div>
   );
 };

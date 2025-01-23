@@ -102,8 +102,8 @@ export const LoadGraph = () => {
         });
 
         // map weight to size of edges
-        const minEdgeMult = 0.1; // minimum multiplier from weight to size
-        const maxEdgeMult = 10; // maximum multiplier from weight to size
+        const minEdgeMult = 0.05; // minimum multiplier from weight to size
+        const maxEdgeMult = 5; // maximum multiplier from weight to size
         graph.forEachEdge((edge) => {
           const weight = graph.getEdgeAttribute(edge, "weight");
           const size =
@@ -150,7 +150,7 @@ export const LoadGraph = () => {
         const sensibleSettings = forceAtlas2.inferSettings(graph);
         forceAtlas2.assign(graph, {
           // assign the forceAtlas2 layout
-          iterations: 50,
+          iterations: 15,
           settings: {
             scalingRatio: 500,
             ...sensibleSettings,

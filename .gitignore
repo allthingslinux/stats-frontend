@@ -25,3 +25,6 @@ dist-ssr
 
 # sensitive files
 .env
+
+# Million Lint
+.million
