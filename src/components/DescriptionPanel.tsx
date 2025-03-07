@@ -68,7 +68,8 @@ const DescriptionPanel: FC = () => {
         Created by the All Things Linux and Accurate Linux Graphs.<br />
         Backend and source graph files available at <a href="https://stats-backend.atl.dev" className="underline">https://stats-backend.atl.dev</a>.<br />
         <br />
-        Data collection started on 2024-11-24 in the #general channel.<br />
+        Data collection started on 2024-11-24 in the #general channel. There was a outage between 2025-02-22 (estimated) and 2025-03-07.<br />
+        <br />
         If you do not show up in the graph, run <b>s$toggleanonymous</b>. If you still do not show up, you most likely were culled (details below). Please wait a bit until you have more activity.<br />
       </div>
     </Panel>
