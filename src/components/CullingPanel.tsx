@@ -1,5 +1,5 @@
 import { FC, PropsWithChildren, ReactNode, useEffect, useRef, useState, useMemo } from "react";
-import { BsInfoCircle } from "react-icons/bs";
+import { FaRegTrashAlt } from "react-icons/fa";
 import { MdExpandLess, MdExpandMore } from "react-icons/md";
 import AnimateHeight from "react-animate-height";
 
@@ -51,28 +51,20 @@ const Panel: FC<PropsWithChildren<{ title: ReactNode | string; initiallyDeployed
   );
 };
 
-const DescriptionPanel: FC = () => {
+const CullingPanel: FC = () => {
   return (
     <Panel
-      initiallyDeployed
       title={
         <div className="flex items-center m-2 space-x-2">
-          <BsInfoCircle className="text-muted" /> <b>About</b>
+          <FaRegTrashAlt className="text-muted" /> <b>Culling</b>
         </div>
       }
     >
-      <div className="px-2 text-sm description">
-        This tracks how much different users ping/reply ping each other in the All Things Linux server. The more a user pings another
-        user, the closer they are in the graph and the thicker the line between them.<br />
-        <br />
-        Created by the All Things Linux and Accurate Linux Graphs.<br />
-        Backend and source graph files available at <a href="https://stats-backend.atl.dev" className="underline">https://stats-backend.atl.dev</a>.<br />
-        <br />
-        Data collection started on 2024-11-24 in the #general channel.<br />
-        If you do not show up in the graph, run <b>s$toggleanonymous</b>. If you still do not show up, you most likely were culled (details below). Please wait a bit until you have more activity.<br />
+      <div className="px-2 text-sm culling">
+        <b>Want to see all nodes and edges? Open the .gexf file in Gephi or search your name to see all connections.</b>
       </div>
     </Panel>
   );
 };
 
-export default DescriptionPanel;
+export default CullingPanel;

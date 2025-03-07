@@ -10,6 +10,7 @@ import "@react-sigma/core/lib/react-sigma.min.css";
 import DescriptionPanel from "./DescriptionPanel";
 import DarkModeControl from "./DarkModeButton";
 import "../index.css";
+import CullingPanel from "./CullingPanel";
 
 // import { LayoutsControl } from "../../common/LayoutsControl";
 
@@ -28,6 +29,7 @@ export const Complete: FC = memo(() => {
         </div>
         {/* <LayoutsControl /> */}
         <DescriptionPanel />
+        <CullingPanel />
       </ControlsContainer>
     </>
   );
