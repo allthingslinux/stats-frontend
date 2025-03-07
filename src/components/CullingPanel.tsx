@@ -61,7 +61,7 @@ const CullingPanel: FC = () => {
       }
     >
       <div className="px-2 text-sm culling">
-        <b>Want to see all nodes and edges? Open the .gexf file in Gephi or search your name to see all connections.</b>
+        <b>Want to see all nodes and edges? Open the .gexf file in Gephi or click a node to see all connections.</b>
       </div>
     </Panel>
   );
