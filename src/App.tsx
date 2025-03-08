@@ -64,6 +64,51 @@ const resetGraphView = (graph: Graph) => {
   });
 };
 
+const handleClickNode = (graph: Graph, node: string) => {
+  if (!node) return;
+
+  // If node clicked is doubled, reset graph view and return
+  if (graph.getNodeAttribute(node, "sizeDoubled")) {
+    resetGraphView(graph);
+    return;
+  }
+
+  resetGraphView(graph);
+
+  const neighbors = graph.neighbors(node);
+  neighbors.push(node);
+
+  graph.forEachNode((n) => {
+    if (!neighbors.includes(n)) {
+      graph.setNodeAttribute(n, "hidden", true);
+      graph.setNodeAttribute(n, "hiddenFromClick", true);
+    }
+  });
+
+  graph.forEachEdge((edge) => {
+    if (graph.getEdgeAttribute(edge, "culled")) {
+      graph.removeEdgeAttribute(edge, "hidden");
+    }
+  });
+
+  graph.forEachEdge((edge) => {
+    const source = graph.source(edge);
+    const target = graph.target(edge);
+    if (source !== node && target !== node) {
+      graph.setEdgeAttribute(edge, "hidden", true);
+    }
+  });
+
+  graph.setNodeAttribute(node, "highlighted", true);
+
+  graph.forEachNode((n) => {
+    if (neighbors.includes(n)) {
+      graph.setNodeAttribute(n, "size", graph.getNodeAttribute(n, "size") * 2);
+      graph.setNodeAttribute(n, "sizeDoubled", true);
+    }
+  });
+};
+
 // Component that loads the graph from the GEXF file
 export const LoadGraph: React.FC = () => {
   const loadGraph = useLoadGraph();
@@ -168,8 +213,8 @@ export const LoadGraph: React.FC = () => {
           if (weight < minWeight) minWeight = weight;
           if (weight > maxWeight) maxWeight = weight;
         });
-        const minEdgeMult = 0.05;
-        const maxEdgeMult = 5;
+        const minEdgeMult = 0.2;
+        const maxEdgeMult = 10;
         graph.forEachEdge((edge: string) => {
           const weight = graph.getEdgeAttribute(edge, "weight");
           const size =
@@ -228,59 +273,8 @@ const GraphEvents: React.FC = () => {
 
   useEffect(() => {
     registerEvents({
-      clickNode: (event) => {
-        const node = event.node;
-        if (!node) return;
-
-        // if node clicked is quadrupled, reset graph view and return
-        if (graph.getNodeAttribute(node, "sizeQuadrupled")) {
-          resetGraphView(graph);
-          return;
-        }
-
-        resetGraphView(graph);
-
-        const neighbors = graph.neighbors(node);
-        neighbors.push(node);
-
-        console.log(neighbors);
-
-        graph.forEachNode((n) => {
-          if (!neighbors.includes(n)) {
-            graph.setNodeAttribute(n, "hidden", true);
-            graph.setNodeAttribute(n, "hiddenFromClick", true);
-          }
-        });
-
-        graph.forEachEdge((edge) => {
-          if (graph.getEdgeAttribute(edge, "culled")) {
-            graph.removeEdgeAttribute(edge, "hidden");
-          }
-        });
-
-        graph.forEachEdge((edge) => {
-          const source = graph.source(edge);
-          const target = graph.target(edge);
-          if (source !== node && target !== node) {
-            graph.setEdgeAttribute(edge, "hidden", true);
-          }
-        });
-
-        graph.setNodeAttribute(node, "highlighted", true);
-
-        graph.forEachNode((n) => {
-          if (neighbors.includes(n)) {
-            graph.setNodeAttribute(n, "size", graph.getNodeAttribute(n, "size") * 2);
-            graph.setNodeAttribute(n, "sizeDoubled", true);
-          }
-        });
-        graph.setNodeAttribute(node, "size", graph.getNodeAttribute(node, "size") * 4);
-        graph.setNodeAttribute(node, "sizeQuadrupled", true);
-      },
-      clickStage: () => {
-        // Reset graph view when stage is clicked
-        resetGraphView(graph);
-      },
+      clickNode: (event) => handleClickNode(graph, event.node),
+      clickStage: () => resetGraphView(graph),
     });
   }, [registerEvents, graph]);
 
