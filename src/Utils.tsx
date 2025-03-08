@@ -80,4 +80,82 @@ function getNodeColor(graph: Graph, node: string) {
   return getColor(degree, minDegree, maxDegree);
 }
 
-export { getColor, scale, getNodeSize, getNodeColor };
+/**
+ * Reset the graph view by removing hidden and highlighted states and
+ * reverting any node size modifications.
+ */
+const resetGraphView = (graph: Graph): void => {
+  console.log("Resetting graph view");
+  graph.forEachNode((node: string) => {
+    // Remove hidden and highlight flags.
+    if (graph.getNodeAttribute(node, "hiddenFromClick")) {
+      graph.removeNodeAttribute(node, "hidden");
+      graph.removeNodeAttribute(node, "hiddenFromClick");
+    }
+    if (graph.getNodeAttribute(node, "highlighted")) {
+      graph.removeNodeAttribute(node, "highlighted");
+    }
+    graph.removeNodeAttribute(node, "clicked");
+  });
+
+  graph.forEachEdge((edge: string) => {
+    // For culled edges, ensure they remain hidden.
+    if (graph.getEdgeAttribute(edge, "culled")) {
+      graph.setEdgeAttribute(edge, "hidden", true);
+    } else {
+      graph.removeEdgeAttribute(edge, "hidden");
+    }
+  });
+};
+
+/**
+ * Handle a node click event by highlighting the clicked node and its neighbors,
+ * while hiding unrelated nodes and adjusting edge visibility.
+ */
+const handleClickNode = (graph: Graph, clickedNode: string): void => {
+  if (!clickedNode) return;
+  console.log(`Node clicked: ${clickedNode}`);
+
+  // If the node is already highlighted, reset the view.
+  if (graph.getNodeAttribute(clickedNode, "clicked")) {
+    resetGraphView(graph);
+    return;
+  }
+
+  resetGraphView(graph);
+
+  // Get the clicked node and its neighbors.
+  const neighborNodes: string[] = graph.neighbors(clickedNode);
+  neighborNodes.push(clickedNode);
+
+  // Hide nodes that are not the clicked node or its neighbors.
+  graph.forEachNode((node: string) => {
+    if (!neighborNodes.includes(node)) {
+      graph.setNodeAttribute(node, "hidden", true);
+      graph.setNodeAttribute(node, "hiddenFromClick", true);
+    }
+  });
+
+  // Process edges: if an edge connects to the clicked node, unhide culled edges;
+  // otherwise, hide the edge.
+  graph.forEachEdge((edge: string) => {
+    const source = graph.source(edge);
+    const target = graph.target(edge);
+    if (source === clickedNode || target === clickedNode) {
+      if (graph.getEdgeAttribute(edge, "culled")) {
+        graph.removeEdgeAttribute(edge, "hidden");
+      }
+    } else {
+      graph.setEdgeAttribute(edge, "hidden", true);
+    }
+  });
+
+  // Highlight the clicked node.
+  graph.setNodeAttribute(clickedNode, "highlighted", true);
+
+  // add attribute saying that the node is clicked
+  graph.setNodeAttribute(clickedNode, "clicked", true);
+  console.log("Graph updated: highlighted node and its neighbors.");
+};
+
+export { getColor, scale, getNodeSize, getNodeColor, resetGraphView, handleClickNode };

@@ -12,104 +12,35 @@ import "@react-sigma/core/lib/react-sigma.min.css";
 import { useLayoutCircular } from "@react-sigma/layout-circular";
 import forceAtlas2 from "graphology-layout-forceatlas2";
 import { createNodeImageProgram } from "@sigma/node-image";
-import { getColor, getNodeSize, getNodeColor } from "./Utils";
+import { getColor, getNodeSize, getNodeColor, resetGraphView, handleClickNode } from "./Utils";
 import { Complete } from "./components/Controls";
 import { drawLabel, drawHover } from "./GraphRenderers";
 import { weightedDegree } from "graphology-metrics/node";
 
-let sigmaStyle: React.CSSProperties;
+// ---------------------------------------------------------------------
+// Sigma Container Style (based on dark mode setting)
+// ---------------------------------------------------------------------
+const sigmaStyle: React.CSSProperties = {
+  backgroundColor: document.cookie.includes("darkMode=true") ? "#000" : undefined,
+  height: "100vh",
+  width: "100vw",
+};
+
 if (document.cookie.includes("darkMode=true")) {
-  sigmaStyle = { backgroundColor: "#080808", height: "100vh", width: "100vw" };
   document.documentElement.classList.add("dark");
-} else {
-  sigmaStyle = { height: "100vh", width: "100vw" };
 }
 
-// Create a resetGraphView function
-const resetGraphView = (graph: Graph) => {
-  // Show all nodes
-  graph.forEachNode((node: string) => {
-    if (graph.getNodeAttribute(node, "hiddenFromClick")) {
-      graph.removeNodeAttribute(node, "hidden");
-      graph.removeNodeAttribute(node, "hiddenFromClick");
-    }
-  });
+// ---------------------------------------------------------------------
+// Graph Loading Component
+// ---------------------------------------------------------------------
 
-  // Show all edges
-  graph.forEachEdge((edge: string) => {
-    if (graph.getEdgeAttribute(edge, "culled")) {
-      graph.setEdgeAttribute(edge, "hidden", true);
-    } else {
-      graph.removeEdgeAttribute(edge, "hidden");
-    }
-  });
-
-  // Unhighlight all nodes
-  graph.forEachNode((node: string) => {
-    graph.removeNodeAttribute(node, "highlighted");
-  });
-
-  // Revert node sizes
-  graph.forEachNode((node: string) => {
-    if (graph.getNodeAttribute(node, "sizeDoubled")) {
-      graph.setNodeAttribute(node, "size", graph.getNodeAttribute(node, "size") / 2);
-      graph.removeNodeAttribute(node, "sizeDoubled");
-    }
-  });
-  graph.forEachNode((node: string) => {
-    if (graph.getNodeAttribute(node, "sizeQuadrupled")) {
-      graph.setNodeAttribute(node, "size", graph.getNodeAttribute(node, "size") / 4);
-      graph.removeNodeAttribute(node, "sizeQuadrupled");
-    }
-  });
-};
-
-const handleClickNode = (graph: Graph, node: string) => {
-  if (!node) return;
-
-  // If node clicked is doubled, reset graph view and return
-  if (graph.getNodeAttribute(node, "sizeDoubled")) {
-    resetGraphView(graph);
-    return;
-  }
-
-  resetGraphView(graph);
-
-  const neighbors = graph.neighbors(node);
-  neighbors.push(node);
-
-  graph.forEachNode((n) => {
-    if (!neighbors.includes(n)) {
-      graph.setNodeAttribute(n, "hidden", true);
-      graph.setNodeAttribute(n, "hiddenFromClick", true);
-    }
-  });
-
-  graph.forEachEdge((edge) => {
-    if (graph.getEdgeAttribute(edge, "culled")) {
-      graph.removeEdgeAttribute(edge, "hidden");
-    }
-  });
-
-  graph.forEachEdge((edge) => {
-    const source = graph.source(edge);
-    const target = graph.target(edge);
-    if (source !== node && target !== node) {
-      graph.setEdgeAttribute(edge, "hidden", true);
-    }
-  });
-
-  graph.setNodeAttribute(node, "highlighted", true);
-
-  graph.forEachNode((n) => {
-    if (neighbors.includes(n)) {
-      graph.setNodeAttribute(n, "size", graph.getNodeAttribute(n, "size") * 2);
-      graph.setNodeAttribute(n, "sizeDoubled", true);
-    }
-  });
-};
-
-// Component that loads the graph from the GEXF file
+/**
+ * LoadGraph Component:
+ * - Fetches and parses the GEXF file.
+ * - Computes node weights and culls nodes/edges below 75th percentile.
+ * - Sets initial node positions and custom attributes.
+ * - Applies both circular and forceAtlas2 layouts.
+ */
 export const LoadGraph: React.FC = () => {
   const loadGraph = useLoadGraph();
   const { assign } = useLayoutCircular();
@@ -119,73 +50,66 @@ export const LoadGraph: React.FC = () => {
     if (effectRan.current) return;
     effectRan.current = true;
 
-    const gexfUrl = import.meta.env.VITE_GEXF_URL;
-    if (!gexfUrl) {
-      throw new Error("REACT_APP_GEXF_URL environment variable not set");
-    }
-    fetch(gexfUrl)
-      .then((res) => res.text())
-      .then((gexf) => {
-        const graph = parse(Graph, gexf);
+    (async () => {
+      try {
+        const gexfUrl = import.meta.env.VITE_GEXF_URL;
+        if (!gexfUrl) throw new Error("VITE_GEXF_URL environment variable not set");
 
+        console.log("Fetching graph data from:", gexfUrl);
+        const response = await fetch(gexfUrl);
+        const gexfText = await response.text();
+        const graph = parse(Graph, gexfText);
+        console.log("Graph parsed successfully.");
+
+        // Compute and assign weighted degree for each node.
         graph.forEachNode((node: string) => {
-          const weighted = weightedDegree(graph, node);
-          graph.setNodeAttribute(node, "tag", weighted);
+          const weight = weightedDegree(graph, node);
+          graph.setNodeAttribute(node, "tag", weight);
         });
 
-        const nodes = graph.nodes();
-        const nodeTags = nodes.map((node: string) =>
-          graph.getNodeAttribute(node, "tag")
-        );
-        const cutoff =
-          nodeTags.slice().sort((a, b) => a - b)[
-            Math.floor(nodeTags.length * 0.75)
-          ];
-        let removedNodeCount = 0;
-        nodes.forEach((node: string) => {
+        // Cull nodes below the 75th percentile.
+        const allNodes = graph.nodes();
+        const tags = allNodes.map((node: string) => graph.getNodeAttribute(node, "tag"));
+        const cutoff = tags.sort((a, b) => a - b)[Math.floor(tags.length * 0.75)];
+        let removedNodes = 0;
+        allNodes.forEach((node: string) => {
           if (graph.getNodeAttribute(node, "tag") < cutoff) {
             graph.dropNode(node);
-            removedNodeCount++;
+            removedNodes++;
           }
         });
-
-        const description = document.querySelector(".culling");
-        if (description) {
-          description.innerHTML += `<br />Removed <b>${removedNodeCount}</b> nodes. Cutoff: <b>${cutoff}</b>`;
+        const descriptionEl = document.querySelector(".culling");
+        if (descriptionEl) {
+          descriptionEl.innerHTML += `<br/>Removed <b>${removedNodes}/${allNodes.length}</b> nodes. Weight cutoff: <b>${cutoff}</b>`;
         }
+        console.log(`Nodes culled: ${removedNodes} removed (cutoff: ${cutoff}).`);
 
+        // Cull edges below the 75th percentile based on weight.
         const edges = graph.edges();
-        const edgeWeights = edges.map((edge: string) =>
-          graph.getEdgeAttribute(edge, "weight")
-        );
-        const edgeCutoff =
-          edgeWeights.slice().sort((a, b) => a - b)[
-            Math.floor(edgeWeights.length * 0.75)
-          ];
-        let hiddenEdgeCount = 0;
+        const edgeWeights = edges.map((edge: string) => graph.getEdgeAttribute(edge, "weight"));
+        const edgeCutoff = edgeWeights.sort((a, b) => a - b)[Math.floor(edgeWeights.length * 0.75)];
+        let hiddenEdges = 0;
         edges.forEach((edge: string) => {
-          const defaultHidden =
-            graph.getEdgeAttribute(edge, "weight") < edgeCutoff;
-          graph.setEdgeAttribute(edge, "defaultHidden", defaultHidden);
-          if (defaultHidden) {
+          const weight = graph.getEdgeAttribute(edge, "weight");
+          const shouldHide = weight < edgeCutoff;
+          graph.setEdgeAttribute(edge, "defaultHidden", shouldHide);
+          if (shouldHide) {
             graph.setEdgeAttribute(edge, "hidden", true);
             graph.setEdgeAttribute(edge, "culled", true);
-            hiddenEdgeCount++;
+            hiddenEdges++;
           } else {
             graph.removeEdgeAttribute(edge, "hidden");
           }
         });
-
-        if (description) {
-          description.innerHTML += `<br />Hidden <b>${hiddenEdgeCount}</b> edges. Cutoff: <b>${edgeCutoff}</b>`;
+        if (descriptionEl) {
+          descriptionEl.innerHTML += `<br/>Hidden <b>${hiddenEdges}/${edges.length}</b> edges. Weight cutoff: <b>${edgeCutoff}</b>`;
         }
+        console.log(`Edges culled: ${hiddenEdges} hidden (cutoff: ${edgeCutoff}).`);
 
+        // Initialize node positions and update "Anonymous User" nodes.
         graph.forEachNode((node: string) => {
           graph.setNodeAttribute(node, "x", 0);
           graph.setNodeAttribute(node, "y", 0);
-        });
-
-        graph.forEachNode((node: string) => {
           if (graph.getNodeAttribute(node, "label") === "Anonymous User") {
             graph.setNodeAttribute(node, "label", "");
             graph.setNodeAttribute(node, "type", "image");
@@ -193,79 +117,76 @@ export const LoadGraph: React.FC = () => {
           }
         });
 
+        // Load custom node images.
         fetch("/custom.json")
           .then((res) => res.json())
           .then((data) => {
             data.nodes.forEach((node: { id: string; image: string }) => {
-              if (!graph.hasNode(node.id)) return;
-              graph.setNodeAttribute(node.id, "type", "image");
-              graph.setNodeAttribute(node.id, "image", node.image);
+              if (graph.hasNode(node.id)) {
+                graph.setNodeAttribute(node.id, "type", "image");
+                graph.setNodeAttribute(node.id, "image", node.image);
+              }
             });
+            console.log("Custom node images loaded.");
           })
-          .catch((error) => {
-            console.error("Error loading custom JSON", error);
-          });
+          .catch((error) => console.error("Error loading custom JSON:", error));
 
+        // Process edge sizes and colors based on weight.
         let minWeight = Infinity;
         let maxWeight = -Infinity;
         graph.forEachEdge((edge: string) => {
           const weight = graph.getEdgeAttribute(edge, "weight");
-          if (weight < minWeight) minWeight = weight;
-          if (weight > maxWeight) maxWeight = weight;
+          minWeight = Math.min(minWeight, weight);
+          maxWeight = Math.max(maxWeight, weight);
         });
-        const minEdgeMult = 0.2;
-        const maxEdgeMult = 10;
+        const [minEdgeMult, maxEdgeMult] = [0.2, 10];
         graph.forEachEdge((edge: string) => {
           const weight = graph.getEdgeAttribute(edge, "weight");
-          const size =
-            minEdgeMult +
-            ((maxEdgeMult - minEdgeMult) * (weight - minWeight)) /
-              (maxWeight - minWeight);
+          const size = minEdgeMult + ((maxEdgeMult - minEdgeMult) * (weight - minWeight)) / (maxWeight - minWeight);
+          const alpha = 0.1 + ((1 - 0.1) * (weight - minWeight)) / (maxWeight - minWeight);
           graph.setEdgeAttribute(edge, "size", size);
-        });
-        const alphaMin = 0.1;
-        const alphaMax = 1;
-        graph.forEachEdge((edge: string) => {
-          const weight = graph.getEdgeAttribute(edge, "weight");
-          const alpha =
-            alphaMin +
-            ((alphaMax - alphaMin) * (weight - minWeight)) /
-              (maxWeight - minWeight);
           graph.setEdgeAttribute(
             edge,
             "color",
-            getColor(weight, minWeight, maxWeight) +
-              Math.floor(alpha * 255).toString(16)
+            getColor(weight, minWeight, maxWeight) + Math.floor(alpha * 255).toString(16)
           );
         });
 
+        // Set node sizes and colors.
         graph.forEachNode((node: string) => {
-          const size = getNodeSize(graph, node);
-          graph.setNodeAttribute(node, "size", size);
-        });
-        graph.forEachNode((node: string) => {
-          const color = getNodeColor(graph, node);
-          graph.setNodeAttribute(node, "color", color);
+          graph.setNodeAttribute(node, "size", getNodeSize(graph, node));
+          graph.setNodeAttribute(node, "color", getNodeColor(graph, node));
         });
 
+        // Load the graph into Sigma and apply circular layout.
         loadGraph(graph);
         assign();
+        console.log("Graph loaded into Sigma container.");
 
-        const sensibleSettings = forceAtlas2.inferSettings(graph);
+        // Apply forceAtlas2 layout for further refinement.
+        const settings = forceAtlas2.inferSettings(graph);
         forceAtlas2.assign(graph, {
           iterations: 50,
-          settings: {
-            scalingRatio: 1000,
-            ...sensibleSettings,
-          },
+          settings: { scalingRatio: 1000, ...settings },
         });
-      });
+        console.log("forceAtlas2 layout applied.");
+      } catch (error) {
+        console.error("Error loading graph:", error);
+      }
+    })();
   }, [loadGraph, assign]);
 
   return null;
 };
 
-// Simplified GraphEvents: handle only clickNode and clickStage.
+// ---------------------------------------------------------------------
+// Event Registration Component
+// ---------------------------------------------------------------------
+
+/**
+ * GraphEvents Component:
+ * Registers event handlers for node and stage clicks.
+ */
 const GraphEvents: React.FC = () => {
   const sigma = useSigma();
   const graph = sigma.getGraph();
@@ -273,37 +194,50 @@ const GraphEvents: React.FC = () => {
 
   useEffect(() => {
     registerEvents({
-      clickNode: (event) => handleClickNode(graph, event.node),
-      clickStage: () => resetGraphView(graph),
+      clickNode: (event) => {
+        console.log("Node click event:", event);
+        handleClickNode(graph, event.node);
+      },
+      clickStage: () => {
+        console.log("Stage click event: resetting view");
+        resetGraphView(graph);
+      },
     });
   }, [registerEvents, graph]);
 
   return null;
 };
 
-export const DisplayGraph: React.FC = () => {
-  return (
-    <SigmaContainer
-      style={sigmaStyle}
-      settings={{
-        nodeProgramClasses: { image: createNodeImageProgram() },
-        defaultDrawNodeHover: drawHover,
-        defaultDrawNodeLabel: drawLabel,
-      }}
-    >
-      <LoadGraph />
-      <GraphEvents />
-      <Complete />
-    </SigmaContainer>
-  );
-};
+// ---------------------------------------------------------------------
+// Main Display and App Components
+// ---------------------------------------------------------------------
 
-const App: React.FC = () => {
-  return (
-    <div className="App">
-      <DisplayGraph />
-    </div>
-  );
-};
+/**
+ * DisplayGraph Component:
+ * Sets up the SigmaContainer with custom settings and renders the graph.
+ */
+export const DisplayGraph: React.FC = () => (
+  <SigmaContainer
+    style={sigmaStyle}
+    settings={{
+      nodeProgramClasses: { image: createNodeImageProgram() },
+      defaultDrawNodeHover: drawHover,
+      defaultDrawNodeLabel: drawLabel,
+    }}
+  >
+    <LoadGraph />
+    <GraphEvents />
+    <Complete />
+  </SigmaContainer>
+);
+
+/**
+ * Root App Component.
+ */
+const App: React.FC = () => (
+  <div className="App">
+    <DisplayGraph />
+  </div>
+);
 
 export default App;

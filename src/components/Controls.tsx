@@ -7,10 +7,9 @@ import {
   FullScreenControl,
 } from "@react-sigma/core";
 import "@react-sigma/core/lib/react-sigma.min.css";
-import DescriptionPanel from "./DescriptionPanel";
+import { FaqPanel, CullingPanel, InfoPanel } from "./Menu";
 import DarkModeControl from "./DarkModeButton";
 import "../index.css";
-import CullingPanel from "./CullingPanel";
 
 // import { LayoutsControl } from "../../common/LayoutsControl";
 
@@ -28,7 +27,8 @@ export const Complete: FC = memo(() => {
           <DarkModeControl className="[&&>*]:flex [&>*]:justify-center [&>*]:items-center" /> 
         </div>
         {/* <LayoutsControl /> */}
-        <DescriptionPanel />
+        <InfoPanel />
+        <FaqPanel />
         <CullingPanel />
       </ControlsContainer>
     </>
