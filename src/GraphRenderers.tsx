@@ -56,7 +56,7 @@ export function drawHover(context: CanvasRenderingContext2D, data: PlainObject, 
   //const clusterLabel = data.tag === "unknown" ? "Cluster " + data.cluster : "";
   // sublabel is reserved for future use
   // cluster label should be "Mentions: data.tag" or "Unknown"
-  const subLabel = "";
+  const subLabel = data.subLabel;
   const clusterLabel = data.tag === "unknown" ? "Unknown" : "Mentions: " + data.tag;
 
   // Then we draw the label background

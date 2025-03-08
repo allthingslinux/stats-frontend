@@ -106,15 +106,10 @@ export const LoadGraph: React.FC = () => {
         }
         console.log(`Edges culled: ${hiddenEdges} hidden (cutoff: ${edgeCutoff}).`);
 
-        // Initialize node positions and update "Anonymous User" nodes.
+        // Initialize node positions 
         graph.forEachNode((node: string) => {
           graph.setNodeAttribute(node, "x", 0);
           graph.setNodeAttribute(node, "y", 0);
-          if (graph.getNodeAttribute(node, "label") === "Anonymous User") {
-            graph.setNodeAttribute(node, "label", "");
-            graph.setNodeAttribute(node, "type", "image");
-            graph.setNodeAttribute(node, "image", "./QuestionMark.svg");
-          }
         });
 
         // Load custom node images.

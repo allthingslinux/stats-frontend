@@ -70,6 +70,7 @@ const InfoPanel: FC = () => {
         <br />
         <b>Created by All Things Linux and Accurate Linux Graphs.</b><br />
         <p>Backend and source graph files available at <a href="https://stats-backend.atl.dev" className="underline">https://stats-backend.atl.dev</a>.</p><br />
+        <a href="https://stats-backend.atl.dev/privacy" className="underline">Privacy Policy</a>
       </div>
     </Panel>
   );
@@ -86,14 +87,13 @@ const FaqPanel: FC = () => {
     >
       <div className="px-2 text-sm description">
         <i>Why am I not showing up in the graph?</i><br />
-        If you do not show up in the graph, run <b>s$toggleanonymous</b>. If you still do not show up, you most likely were culled (details below). Please wait a bit until you have more activity.<br />
+        If you do not show up in the graph, run <b>s$optin</b>. If you still do not show up, you most likely were culled (details below). Please wait a bit until you have more activity.<br />
         <br />
         <i>How long has data been collected?</i><br />
         Data collection started on 2024-11-24 in the #general channel. There was a outage between 2025-02-22 (estimated) and 2025-03-07.<br />
         <br />
-        <i>Is data anonymous?</i><br />
-        Unless you turn off anonymous mode, all data is anonymous. User IDs are encrypted by the backend and are not stored in the graph files. If you still want to be removed, you can either leave (you get auto removed) or run <b>s$toggleoptout</b>.<br />
-        If you find any issues with this aspect please open a ticket with <b>/ticket</b>, keep in mind this project was made for fun pretty fast and as such is not perfect.<br />
+        <i>What happened to my data?</i><br />
+        If you leave the server, you are automatically opted out and as such your data is removed. This also happens if you opt out manually. (s$optout)<br />
         <br />
         <i>Where is the source code?</i><br />
         <a href="https://github.com/allthingslinux/stats-backend" className="underline">Backend source code</a><br />
