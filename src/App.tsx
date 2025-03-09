@@ -244,7 +244,7 @@ const App: React.FC = () => {
   useEffect(() => {
     if (selectedNode) {
       console.log("Selected node:", selectedNode);
-      FocusOnNode({ node: selectedNode, move: true });
+      FocusOnNode({ node: selectedNode, move: true, highlight: true });
     }
   }, [selectedNode]);
 

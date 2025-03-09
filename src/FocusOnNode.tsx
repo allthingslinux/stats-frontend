@@ -1,8 +1,8 @@
 import { useCamera, useSigma } from '@react-sigma/core';
 import { FC, useEffect } from 'react';
-import { handleClickNode } from './Utils';
+import { handleClickNode, resetGraphView } from './Utils';
 
-export const FocusOnNode: FC<{ node: string | null; move?: boolean }> = ({ node, move }) => {
+export const FocusOnNode: FC<{ node: string | null; move?: boolean; highlight?: boolean }> = ({ node, move, highlight }) => {
   // Get sigma
   const sigma = useSigma();
   // Get camera hook
@@ -15,12 +15,15 @@ export const FocusOnNode: FC<{ node: string | null; move?: boolean }> = ({ node,
     if (!node) return;
     sigma.getGraph().setNodeAttribute(node, 'highlighted', true);
     if (move) gotoNode(node);
+    handleClickNode(sigma.getGraph(), node);
 
     return () => {
-      sigma.getGraph().setNodeAttribute(node, 'highlighted', false);
-      handleClickNode(sigma.getGraph(), node);
+      if (!highlight) {
+        sigma.getGraph().setNodeAttribute(node, 'highlighted', false);
+        resetGraphView(sigma.getGraph());
+      }
     };
-  }, [node, move, sigma, gotoNode]);
+  }, [node, move, highlight, sigma, gotoNode]);
 
   return null;
 };
