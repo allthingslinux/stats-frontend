@@ -12,7 +12,7 @@ some things are hard coded please fork if you want to self host
 - [x] Dark mode
 - [x] Color by weight and thickness by weight
 - [x] About dropdown under search bar
-- [ ] click on user to see other users and each edges weight and the users weighted degree
+- [x] click on user to see other users and each edges weight and the users weighted degree
 
 ## **Low Priority**
 

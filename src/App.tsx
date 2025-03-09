@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./index.css";
 import Graph from "graphology";
 import { parse } from "graphology-gexf";
@@ -8,7 +8,7 @@ import {
   useRegisterEvents,
   useSigma,
 } from "@react-sigma/core";
-import "@react-sigma/core/lib/react-sigma.min.css";
+import '@react-sigma/core/lib/style.css';
 import { useLayoutCircular } from "@react-sigma/layout-circular";
 import forceAtlas2 from "graphology-layout-forceatlas2";
 import { createNodeImageProgram } from "@sigma/node-image";
@@ -16,6 +16,7 @@ import { getColor, getNodeSize, getNodeColor, resetGraphView, handleClickNode } 
 import { Complete } from "./components/Controls";
 import { drawLabel, drawHover } from "./GraphRenderers";
 import { weightedDegree } from "graphology-metrics/node";
+import { FocusOnNode } from "./FocusOnNode";
 
 // ---------------------------------------------------------------------
 // Sigma Container Style (based on dark mode setting)
@@ -33,11 +34,10 @@ if (document.cookie.includes("darkMode=true")) {
 // ---------------------------------------------------------------------
 // Graph Loading Component
 // ---------------------------------------------------------------------
-
 /**
  * LoadGraph Component:
  * - Fetches and parses the GEXF file.
- * - Computes node weights and culls nodes/edges below 75th percentile.
+ * - Computes node weights.
  * - Sets initial node positions and custom attributes.
  * - Applies both circular and forceAtlas2 layouts.
  */
@@ -179,7 +179,6 @@ export const LoadGraph: React.FC = () => {
 // ---------------------------------------------------------------------
 // Event Registration Component
 // ---------------------------------------------------------------------
-
 /**
  * GraphEvents Component:
  * Registers event handlers for node and stage clicks.
@@ -208,7 +207,6 @@ const GraphEvents: React.FC = () => {
 // ---------------------------------------------------------------------
 // Main Display and App Components
 // ---------------------------------------------------------------------
-
 /**
  * DisplayGraph Component:
  * Sets up the SigmaContainer with custom settings and renders the graph.
@@ -230,11 +228,31 @@ export const DisplayGraph: React.FC = () => (
 
 /**
  * Root App Component.
+ * Moved the state and related effects inside the component.
  */
-const App: React.FC = () => (
-  <div className="App">
-    <DisplayGraph />
-  </div>
-);
+const App: React.FC = () => {
+  const [selectedNode] = useState<string | null>(null);
+  const [focusNode] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (focusNode) {
+      console.log("Focusing on node:", focusNode);
+      FocusOnNode({ node: focusNode, move: true });
+    }
+  }, [focusNode]);
+
+  useEffect(() => {
+    if (selectedNode) {
+      console.log("Selected node:", selectedNode);
+      FocusOnNode({ node: selectedNode, move: true });
+    }
+  }, [selectedNode]);
+
+  return (
+    <div className="App">
+      <DisplayGraph />
+    </div>
+  );
+};
 
 export default App;
