@@ -67,6 +67,7 @@ export const LoadGraph: React.FC = () => {
           graph.setNodeAttribute(node, "tag", weight);
         });
 
+        /*
         // Cull nodes below the 75th percentile.
         const allNodes = graph.nodes();
         const tags = allNodes.map((node: string) => graph.getNodeAttribute(node, "tag"));
@@ -105,6 +106,7 @@ export const LoadGraph: React.FC = () => {
           descriptionEl.innerHTML += `<br/>Hidden <b>${hiddenEdges}/${edges.length}</b> edges. Weight cutoff: <b>${edgeCutoff}</b>`;
         }
         console.log(`Edges culled: ${hiddenEdges} hidden (cutoff: ${edgeCutoff}).`);
+        */
 
         // Initialize node positions 
         graph.forEachNode((node: string) => {
@@ -162,7 +164,7 @@ export const LoadGraph: React.FC = () => {
         const settings = forceAtlas2.inferSettings(graph);
         forceAtlas2.assign(graph, {
           iterations: 50,
-          settings: { scalingRatio: 1000, ...settings },
+          settings: { scalingRatio: 250, ...settings },
         });
         console.log("forceAtlas2 layout applied.");
       } catch (error) {
