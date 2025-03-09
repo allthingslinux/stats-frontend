@@ -132,9 +132,11 @@ export function drawLabel(
   context.font = `${weight} ${size}px ${font}`;
   const width = context.measureText(data.label).width + 8;
 
-  context.fillStyle = "#ffffffcc";
+  //context.fillStyle = "#ffffffcc";
+  context.fillStyle = data.color ? data.color : "#ffffffcc";
   context.fillRect(data.x + data.size, data.y + size / 3 - 15, width, 20);
 
-  context.fillStyle = "#000";
+  //context.fillStyle = "#000";
+  context.fillStyle = isColorLight(data.color) ? "#000" : "#fff";
   context.fillText(data.label, data.x + data.size + 3, data.y + size / 3);
 }
