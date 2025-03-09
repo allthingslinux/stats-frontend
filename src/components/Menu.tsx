@@ -90,7 +90,7 @@ const FaqPanel: FC = () => {
         If you do not show up in the graph, run <b>s$optin</b>. If you still do not show up, you most likely were culled (details below). Please wait a bit until you have more activity.<br />
         <br />
         <i>How long has data been collected?</i><br />
-        Data collection started on 2024-11-24 in the #general channel. There was a outage between 2025-02-22 (estimated) and 2025-03-07.<br />
+        Data collection started on March 8, 2025.<br />
         <br />
         <i>What happened to my data?</i><br />
         If you leave the server, you are automatically opted out and as such your data is removed. This also happens if you opt out manually. (s$optout)<br />
