@@ -164,7 +164,7 @@ export const LoadGraph: React.FC = () => {
         const settings = forceAtlas2.inferSettings(graph);
         forceAtlas2.assign(graph, {
           iterations: 50,
-          settings: { scalingRatio: 250, ...settings },
+          settings: settings,
         });
         console.log("forceAtlas2 layout applied.");
       } catch (error) {
