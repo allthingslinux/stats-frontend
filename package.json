@@ -9,7 +9,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "preview:worker": "yarn run build && wrangler dev"
+    "preview:worker": "yarn run build && wrangler dev",
+    "deploy:worker": "yarn run build && wrangler deploy"
   },
   "dependencies": {
     "@react-sigma/core": "^5.0.2",
