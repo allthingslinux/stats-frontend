@@ -1,3 +1,7 @@
 name = "stats-frontend"
 compatibility_date = "2025-10-08"
 assets = { directory = "dist" }
+
+[observability]
+enabled = true
+head_sampling_rate = 1
